@@ -66,5 +66,3 @@ def extract(latitude=40.4406, longitude=-79.9959, forecast_days=7, past_days=0):
     df = pd.DataFrame(daily_data)
 
     return df
-
-print(extract())
