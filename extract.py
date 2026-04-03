@@ -7,11 +7,13 @@ from retry_requests import retry
 params:
     - latitude: The latitude of the location for which to retrieve weather data (default is 40.4406 for Pittsburgh).
     - longitude: The longitude of the location for which to retrieve weather data (default is -79.9959 for Pittsburgh).
+    - forecast_days: The number of future days to include in the forecast (default is 7).
+    - past_days: The number of past days to include in the data (default is 0).
 returns:
     - A pandas DataFrame containing the daily weather data for the specified location.
 The function uses caching and retry mechanisms to handle API requests efficiently and robustly.
 """
-def extract(latitude=40.4406, longitude=-79.9959):
+def extract(latitude=40.4406, longitude=-79.9959, forecast_days=7, past_days=0):
     # Setup API client
     cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
     retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
@@ -30,6 +32,8 @@ def extract(latitude=40.4406, longitude=-79.9959):
             "uv_index_max", "precipitation_sum",
             "precipitation_probability_max", "wind_speed_10m_max"
         ],
+        "past_days": past_days,
+        "forecast_days": forecast_days,
         "timezone": "America/New_York",
         "wind_speed_unit": "mph",
         "temperature_unit": "fahrenheit",
@@ -62,3 +66,5 @@ def extract(latitude=40.4406, longitude=-79.9959):
     df = pd.DataFrame(daily_data)
 
     return df
+
+print(extract())
